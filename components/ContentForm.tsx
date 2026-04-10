@@ -1,16 +1,17 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ContentInput, GeneratedContent } from '@/lib/types';
+import { ContentInput, GeneratedContent, ImageAspectRatio } from '@/lib/types';
 import styles from './content-studio.module.css';
 
 type Props = {
   onGenerated: (content: GeneratedContent, input: ContentInput) => void;
-  onImageGenerated: (imageUrl: string) => void;
+  onImageGenerated: (imageUrl: string, aspectRatio: ImageAspectRatio) => void;
   onSaved: () => void;
   generatedContent: GeneratedContent | null;
   currentImageUrl: string | null;
   currentInput: ContentInput | null;
+  currentAspectRatio: ImageAspectRatio;
 };
 
 const initialInput: ContentInput = {
@@ -37,12 +38,15 @@ export default function ContentForm({
   onSaved,
   generatedContent,
   currentImageUrl,
-  currentInput
+  currentInput,
+  currentAspectRatio
 }: Props) {
   const [formData, setFormData] = useState<ContentInput>(initialInput);
+  const [aspectRatio, setAspectRatio] = useState<ImageAspectRatio>('square');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   function update<K extends keyof ContentInput>(key: K, value: ContentInput[K]) {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -54,8 +58,9 @@ export default function ContentForm({
   );
 
   async function generateContent() {
+    setFormError(null);
     if (missingFields.length > 0) {
-      alert(`Please complete these fields: ${missingFields.join(', ')}`);
+      setFormError(`Please complete these fields: ${missingFields.join(', ')}`);
       return;
     }
 
@@ -70,15 +75,16 @@ export default function ContentForm({
       if (!response.ok) throw new Error(data.error ?? 'Generation failed');
       onGenerated(data as GeneratedContent, formData);
     } catch (error) {
-      alert((error as Error).message);
+      setFormError((error as Error).message);
     } finally {
       setIsGenerating(false);
     }
   }
 
   async function generateImage() {
+    setFormError(null);
     if (!generatedContent) {
-      alert('Generate content first so we can use the image prompt.');
+      setFormError('Generate content first so we can use the image prompt.');
       return;
     }
 
@@ -90,23 +96,27 @@ export default function ContentForm({
         body: JSON.stringify({
           imageConcept: generatedContent.imageConcept,
           imagePrompt: generatedContent.imagePrompt,
+          mainCaption: generatedContent.mainCaption,
+          tone: formData.tone,
           brandName: formData.brandName,
-          platform: formData.platform
+          platform: formData.platform,
+          aspectRatio
         })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? 'Image generation failed');
-      onImageGenerated(data.imageUrl as string);
+      onImageGenerated(data.imageUrl as string, (data.aspectRatio as ImageAspectRatio) ?? aspectRatio);
     } catch (error) {
-      alert((error as Error).message);
+      setFormError((error as Error).message);
     } finally {
       setIsGeneratingImage(false);
     }
   }
 
   async function saveToLibrary() {
+    setFormError(null);
     if (!generatedContent || !currentInput) {
-      alert('Generate content before saving.');
+      setFormError('Generate content before saving.');
       return;
     }
 
@@ -119,6 +129,7 @@ export default function ContentForm({
           input: currentInput,
           content: generatedContent,
           imageUrl: currentImageUrl ?? undefined,
+          imageAspectRatio: currentAspectRatio,
           favorite: false
         })
       });
@@ -128,7 +139,7 @@ export default function ContentForm({
       }
       onSaved();
     } catch (error) {
-      alert((error as Error).message);
+      setFormError((error as Error).message);
     } finally {
       setIsSaving(false);
     }
@@ -140,6 +151,7 @@ export default function ContentForm({
       {missingFields.length > 0 && (
         <p className={styles.validationText}>Missing: {missingFields.join(', ')}</p>
       )}
+      {formError && <p className={styles.errorText}>{formError}</p>}
       <div className={styles.grid}>
         <label>
           Brand name
@@ -187,6 +199,14 @@ export default function ContentForm({
             <option value="single post">single post</option>
             <option value="carousel">carousel</option>
             <option value="ad copy">ad copy</option>
+          </select>
+        </label>
+        <label>
+          Image ratio
+          <select value={aspectRatio} onChange={(e) => setAspectRatio(e.target.value as ImageAspectRatio)}>
+            <option value="square">Square (default)</option>
+            <option value="portrait">Portrait</option>
+            <option value="landscape">Landscape</option>
           </select>
         </label>
         <label className={styles.full}>

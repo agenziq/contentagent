@@ -2,6 +2,7 @@ export type Platform = 'Instagram' | 'Facebook' | 'LinkedIn' | 'X';
 export type ContentGoal = 'engagement' | 'leads' | 'awareness' | 'promotion';
 export type Tone = 'professional' | 'bold' | 'premium' | 'funny' | 'cinematic';
 export type PostType = 'single post' | 'carousel' | 'ad copy';
+export type ImageAspectRatio = 'square' | 'portrait' | 'landscape';
 
 export type ContentInput = {
   brandName: string;
@@ -36,6 +37,7 @@ export type LibraryItem = {
   input: ContentInput;
   content: GeneratedContent;
   imageUrl?: string;
+  imageAspectRatio?: ImageAspectRatio;
   favorite: boolean;
   createdAt: string;
 };

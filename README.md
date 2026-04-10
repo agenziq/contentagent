@@ -13,9 +13,10 @@ A premium, dark-mode Next.js app that works like an AI content agent for social 
   - image concept
   - image prompt
   - reasoning blocks (audience, platform style, marketing goal, post angle)
-- Static post visual generation with OpenAI image generation
+- Static post visual generation with OpenAI image generation (square default + portrait/landscape options)
 - Save posts + images to a local content library
 - Favorite toggle for saved posts
+- Strong visual prompting based on caption + brand tone for image generation
 - Mobile responsive UI
 - Secure server-side routes (API key is never exposed to the browser)
 

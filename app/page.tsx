@@ -5,12 +5,13 @@ import { useState } from 'react';
 import ContentForm from '@/components/ContentForm';
 import GeneratedContentCard from '@/components/GeneratedContentCard';
 import styles from '@/components/content-studio.module.css';
-import { ContentInput, GeneratedContent } from '@/lib/types';
+import { ContentInput, GeneratedContent, ImageAspectRatio } from '@/lib/types';
 
 export default function HomePage() {
   const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
   const [currentInput, setCurrentInput] = useState<ContentInput | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageAspectRatio, setImageAspectRatio] = useState<ImageAspectRatio>('square');
 
   return (
     <main className={styles.page}>
@@ -33,12 +34,17 @@ export default function HomePage() {
               setGeneratedContent(content);
               setCurrentInput(input);
               setImageUrl(null);
+              setImageAspectRatio('square');
             }}
-            onImageGenerated={setImageUrl}
+            onImageGenerated={(url, ratio) => {
+              setImageUrl(url);
+              setImageAspectRatio(ratio);
+            }}
             onSaved={() => alert('Saved to content library.')}
             generatedContent={generatedContent}
             currentImageUrl={imageUrl}
             currentInput={currentInput}
+            currentAspectRatio={imageAspectRatio}
           />
 
           <GeneratedContentCard data={generatedContent} imageUrl={imageUrl} />

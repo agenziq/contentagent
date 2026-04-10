@@ -207,3 +207,9 @@
     grid-template-columns: 1fr;
   }
 }
+
+.errorText {
+  margin: 0 0 0.8rem;
+  color: #fda4af;
+  font-size: 0.92rem;
+}

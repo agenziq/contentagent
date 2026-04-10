@@ -80,6 +80,13 @@ export default function LibraryPage() {
                   <strong>Caption:</strong> {item.content.mainCaption}
                 </p>
 
+
+                {item.imageAspectRatio && (
+                  <p>
+                    <strong>Image Ratio:</strong> {item.imageAspectRatio}
+                  </p>
+                )}
+
                 {item.imageUrl && (
                   <Image
                     src={item.imageUrl}
