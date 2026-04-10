@@ -5,13 +5,14 @@ A premium, dark-mode Next.js app that works like an AI content agent for social 
 ## Features
 
 - Guided input form for brand strategy
-- AI generation of:
-  - 3 content ideas
-  - selected post caption
+- AI strategist generation of:
+  - title
   - hook
-  - call to action
+  - main caption
+  - CTA
   - image concept
-  - hashtag suggestions
+  - image prompt
+  - reasoning blocks (audience, platform style, marketing goal, post angle)
 - Static post visual generation with OpenAI image generation
 - Save posts + images to a local content library
 - Favorite toggle for saved posts
@@ -22,7 +23,7 @@ A premium, dark-mode Next.js app that works like an AI content agent for social 
 
 - Next.js (App Router)
 - TypeScript
-- OpenAI API (`chat.completions` + `images.generate`)
+- OpenAI API (`responses` + `images.generate`)
 - Local JSON storage for MVP (`data/library.json`)
 
 ## 1) Install
@@ -64,7 +65,7 @@ npm run start
 
 - `app/page.tsx`: main content studio UI
 - `app/library/page.tsx`: saved content + favorites
-- `app/api/generate-content/route.ts`: server route for text generation
+- `app/api/generate-content/route.ts`: server route for strategist text generation via OpenAI Responses API
 - `app/api/generate-image/route.ts`: server route for image generation
 - `app/api/content-library/route.ts`: save/list/favorite API
 - `lib/openai.ts`: OpenAI client setup

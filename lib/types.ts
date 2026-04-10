@@ -14,13 +14,21 @@ export type ContentInput = {
   topicOrOffer: string;
 };
 
+export type StrategyThinking = {
+  audience: string;
+  platformStyle: string;
+  marketingGoal: string;
+  postAngle: string;
+};
+
 export type GeneratedContent = {
-  contentIdeas: string[];
-  selectedPostCaption: string;
+  strategyThinking: StrategyThinking;
+  title: string;
   hook: string;
-  callToAction: string;
+  mainCaption: string;
+  cta: string;
   imageConcept: string;
-  hashtagSuggestions: string[];
+  imagePrompt: string;
 };
 
 export type LibraryItem = {

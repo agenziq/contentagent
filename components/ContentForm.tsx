@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ContentInput, GeneratedContent } from '@/lib/types';
 import styles from './content-studio.module.css';
 
@@ -24,6 +24,13 @@ const initialInput: ContentInput = {
   topicOrOffer: ''
 };
 
+const requiredTextFields: Array<keyof Pick<ContentInput, 'brandName' | 'niche' | 'targetAudience' | 'topicOrOffer'>> = [
+  'brandName',
+  'niche',
+  'targetAudience',
+  'topicOrOffer'
+];
+
 export default function ContentForm({
   onGenerated,
   onImageGenerated,
@@ -41,7 +48,17 @@ export default function ContentForm({
     setFormData((prev) => ({ ...prev, [key]: value }));
   }
 
+  const missingFields = useMemo(
+    () => requiredTextFields.filter((field) => formData[field].trim().length === 0),
+    [formData]
+  );
+
   async function generateContent() {
+    if (missingFields.length > 0) {
+      alert(`Please complete these fields: ${missingFields.join(', ')}`);
+      return;
+    }
+
     setIsGenerating(true);
     try {
       const response = await fetch('/api/generate-content', {
@@ -61,7 +78,7 @@ export default function ContentForm({
 
   async function generateImage() {
     if (!generatedContent) {
-      alert('Generate content first so we can use the image concept.');
+      alert('Generate content first so we can use the image prompt.');
       return;
     }
 
@@ -72,6 +89,7 @@ export default function ContentForm({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           imageConcept: generatedContent.imageConcept,
+          imagePrompt: generatedContent.imagePrompt,
           brandName: formData.brandName,
           platform: formData.platform
         })
@@ -119,6 +137,9 @@ export default function ContentForm({
   return (
     <div className={styles.panel}>
       <h2>Content Inputs</h2>
+      {missingFields.length > 0 && (
+        <p className={styles.validationText}>Missing: {missingFields.join(', ')}</p>
+      )}
       <div className={styles.grid}>
         <label>
           Brand name

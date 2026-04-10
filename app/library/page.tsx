@@ -68,13 +68,16 @@ export default function LibraryPage() {
                   <strong>Topic:</strong> {item.input.topicOrOffer}
                 </p>
                 <p>
+                  <strong>Title:</strong> {item.content.title}
+                </p>
+                <p>
                   <strong>Hook:</strong> {item.content.hook}
                 </p>
                 <p>
-                  <strong>CTA:</strong> {item.content.callToAction}
+                  <strong>CTA:</strong> {item.content.cta}
                 </p>
                 <p>
-                  <strong>Caption:</strong> {item.content.selectedPostCaption}
+                  <strong>Caption:</strong> {item.content.mainCaption}
                 </p>
 
                 {item.imageUrl && (
